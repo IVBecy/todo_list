@@ -2,14 +2,20 @@
 A To-Do list app in javascript.
 
 # Preview
-![website preview](https://kristofhracza.com/Pictures/todo.png)
+![website preview](https://kristofhracza.com/images/todo.png)
 
-# Built with
-- Javascript
+## **Built with**
+- Javascript **(Vanilla, Jquery, React)**
 - CSS
 - HTML
 
-# Info
+## **Features**
+- Responsive design
+- Stored data, in Local Storage
+- Settings menu
+- Docs page
+
+## **Info**
 **Cards**
 -  To make a card, click the "Add a card" button.
 - To Delete a card, click the " X " button next to it.
