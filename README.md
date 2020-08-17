@@ -2,7 +2,7 @@
 A To-Do list app in javascript.
 
 # Preview
-![website preview](https://kristofhracza.com/images/todo.png)
+![website preview](images/todo.png)
 
 ## **Built with**
 - Javascript **(Vanilla, Jquery, React)**
