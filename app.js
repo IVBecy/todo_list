@@ -35,9 +35,10 @@ $(document).ready(() =>  {
         onLoadRender.push(
           <div className="cont" key={index}>
             <div id={index} className="cards">
-              {textToShow}
-              <i className="fa fa-check" id="check" aria-hidden="true"></i>
-              <i className="fa fa-times" id="x" aria-hidden="true"></i>
+              <div id={`text_${dict[index].name}`}>
+                {textToShow}<br />
+                <h6 id="due_date"><i className="fas fa-clock" style={{ fontSize: "20px", margin:"10px" }}></i>{dict[index].due_date}</h6>
+              </div>
             </div>
           </div>
         ) 
@@ -82,6 +83,7 @@ const render_cards = () => {
   card_count = Math.floor(Math.random() * 10000);
   var props = {
     "name":storage_name,
+    "due_date":"None",
     "text":card_value,
     "short_text":card_value.substring(0,26) + "...",
     "short":"no",
@@ -100,9 +102,10 @@ const render_cards = () => {
     ToBeRendered.push(
       <div className="cont" key={props.name}>
         <div id={props.name} className="cards">
-          {textToShow}
-          <i className="fa fa-check" id="check" aria-hidden="true"></i>
-          <i className="fa fa-times" id="x" aria-hidden="true"></i>
+          <div id={`text_${props.name}`}>
+            {textToShow}<br/>
+            <h6 id="due_date"><i className="fas fa-clock" style={{ fontSize: "20px", margin: "10px" }}></i>{props.due_date}</h6>
+          </div>
         </div>
       </div>
     )
@@ -122,30 +125,10 @@ const render_cards = () => {
   },10)
 }
 
-// Delete a card, if the "X" is clicked
-$(document).on('click', "#x", (e) => {
-  var dict = JSON.parse(localStorage.getItem("cards"))
-  $("#".concat(e.target.parentNode.id)).fadeOut(500);
-  delete dict[e.target.parentNode.id];
-  localStorage.setItem("cards", JSON.stringify(dict));
-  key = "deleted";
-  setTimeout(() => {key = "None"},500);
-});
-
-// Stage a card as "Done" if the check icon is clicked
-$(document).on('click', "#check", (e) => {
-  var dict = JSON.parse(localStorage.getItem("cards"));
-  $("#".concat(e.target.parentNode.id)).css({"text-decoration" : "line-through", "opacity":0.6});
-  dict[e.target.parentNode.id].done = "yes";
-  localStorage.setItem("cards", JSON.stringify(dict));
-  key = "done";
-  setTimeout(() => {key = "None"},500);
-});
-
 // If a card is clicked, the user can edit its content, and see the full message
 $(document).on('click', ".cards", (e) => {;
   var collect = JSON.parse(localStorage.getItem("cards"));
-  var card = collect[e.target.id];
+  var card = collect[e.target.parentNode.id];
   // pass if the check, or the x is clicked only proceed if the card itself has been clicked
   if (key == "done") {}
   else if (key == "deleted") {}
@@ -160,39 +143,61 @@ $(document).on('click', ".cards", (e) => {;
         <div>
             <div className="container">
               <div><i className="fa fa-times" id="cancel_settings" style={{ fontSize: "30px" }} onClick={close_message}></i></div>
-              <h3 style={{ textDecoration: "underline" }}>Your message:</h3>
-              <div id="message">{card.text}</div>
+              <div id="message" contentEditable="true" suppressContentEditableWarning="true">{card.text}</div>
             </div>
             <br/>
             <hr/>
             <div className="container" style={{ "display": "block" }}>
-              <h3 style={{textDecoration:"underline"}}>Edit your message:</h3>
-              <input id="message_input" type="text" ></input><button onClick={save_message}>Save message</button>
+            <h3 style={{ textDecoration: "underline" }}>Set due date:</h3>
+            <input id="date" type="date" defaultValue={card.due_date} /><br />
+            <h3 style={{ textDecoration: "underline" }}>States</h3>
+            <i className="fa fa-check" id="check" aria-hidden="true"></i>
+            <i className="fa fa-times" id="x" aria-hidden="true"></i>
             </div>
           </div>
       )
     };
     ReactDOM.render(<MessageChange />, document.getElementById("card_overlay"));
-    // Set value  for the input field
-    document.getElementById("message_input").value = card.text;
-    // Settings to be saved + reload
-    // arrow function does not work for some reason
-    function save_message() {
-      //shortening
-      var message = document.getElementById("message_input").value;
-      shorten(message, card)
-      //save and reload
-      localStorage.setItem("cards", JSON.stringify(collect));
-      location.reload();
-    }
   }
+  // Settings to be saved + reload
+  // arrow function does not work for some reason
+  // Function for closing the info pop-up
+  function close_message () {
+    //shortening
+    var message = document.getElementById("message").innerHTML;
+    shorten(message, card)
+    //set due date to cards
+    var date = document.getElementById("date").value
+    if (date == "" || date == "null" || date == "undefined"){
+      //pass
+    }
+    else{
+      card["due_date"] = date
+    }
+    //save and reload
+    localStorage.setItem("cards", JSON.stringify(collect));
+    document.getElementById(`text_${card.name}`).innerHTML = textToShow
+    // location.reload();
+    $("#card_overlay").slideToggle(500);
+    document.getElementById("pre_overlay").style.display = "none";
+    }
+  // Delete a card, if the "X" is clicked
+  $("#x").click(() => {
+    delete collect[e.target.parentNode.id];
+    localStorage.setItem("cards", JSON.stringify(collect));
+    key = "deleted";
+    setTimeout(() => { key = "None" }, 500);
+    location.reload()
+  });
+  // Stage a card as "Done" if the check icon is clicked
+  $(`#check`).click(() => {
+    card.done = "yes";
+    localStorage.setItem("cards", JSON.stringify(collect));
+    key = "done";
+    $("#".concat(collect[e.target.parentNode.id].name)).css({ "text-decoration": "line-through", "opacity": 0.6 });
+    setTimeout(() => { key = "None" }, 500);
+  });
 });
-
-// Function for closing the info pop-up
-const close_message = () => {
-  $("#card_overlay").slideToggle(500);
-  document.getElementById("pre_overlay").style.display = "none";
-}
 
 // If you click on the title, you can change its name
 $("#title").click(() =>{
@@ -357,7 +362,8 @@ const render_input = () => {
   const Inputs = () => {
     return (
       <div className="container" id="input_field" style={{ "display": "block" }}>
-        <input id="todo_input" type="text" placeholder="Enter something" /><br/><button onClick={render_cards}>Save this card</button>
+        <input id="todo_input" type="text" placeholder="Enter something" /><br/>
+        <button onClick={render_cards}>Save this card</button>
       </div>
     )
   }

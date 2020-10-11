@@ -90,7 +90,7 @@ i{
 
 [contenteditable="true"]:active,
 [contenteditable="true"]:focus{
-  border:none;
+  border:2px solid rgb(5, 88, 241);
   outline:none;
 }
 
@@ -181,8 +181,8 @@ i{
   position: fixed; 
   overflow-y: scroll;
   display: none;
-  width: fit-content;
-  max-width: 80%;
+  width: 50%;
+  max-width: 50%;
   height: fit-content;
   padding:10px;
   top: 0;
@@ -213,6 +213,7 @@ i{
   padding: 10px;
   margin-left: 10px;
   transition:0.7s;
+  font-size: 30px;
 }
 
 #check:hover{
@@ -224,9 +225,8 @@ i{
 #x{
   background-color: #f05108;
   padding: 10px;
-  border-top-right-radius: 5px;
-  border-bottom-right-radius: 5px;
   transition: 0.7s;
+  font-size: 30px;
 }
 
 #x:hover{
@@ -281,6 +281,10 @@ i{
   padding-right: 50px;
   background-color: rgba(0,0,0,0.5);
 }
+#due_date{
+  width: 100%;
+  padding:10px;
+}
 /***************************** CLASS SELECTORS *************************************/
 /*Center aligned text*/
 .container{
@@ -307,12 +311,12 @@ i{
   height:fit-content;
   margin-top: 20px;
   margin-bottom: 20px;
-  text-align: left;
+  text-align: center;
   margin-left: auto;
   margin-right: auto;
-  padding-left:20px;
+  padding:10px;
   background-color: whitesmoke;
-  border-radius: 5px;
+  border-radius: 30px;
   font-family: "Fredoka One";
   font-size: 2rem;
   transition: 1s;
