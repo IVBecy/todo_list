@@ -1,9 +1,12 @@
 // Variables 
 var key = "None";
 var textToShow;
+var state;
 var ToBeRendered = [];
 var onLoadRender = [];
 var list = [];
+var checkList = [];
+var checkListLocal = {};
 var dictFromStorage = {};
 var settings = {};
 var card_count = Math.floor(Math.random() * 10000);
@@ -88,6 +91,7 @@ const render_cards = () => {
     "short_text":card_value.substring(0,26) + "...",
     "short":"no",
     "done":"no",
+    "check_list":{},
   };
   //shortening
   shorten(card_value, props)
@@ -134,6 +138,8 @@ $(document).on('click', ".cards", (e) => {;
   else if (key == "deleted") {}
   else{
     key = "None";
+    if (card.done == "yes"){state="Done"}
+    else{state="In-progress"}
     $("#card_overlay").slideToggle(500);
     document.getElementById("pre_overlay").style.display = "block";
     document.getElementById("card_overlay").style.display = "block";
@@ -149,9 +155,20 @@ $(document).on('click', ".cards", (e) => {;
           <div className="left_container" style={{ "display": "block" }}>
             <h4><i className="fas fa-align-left" id="icons_overlay"></i>Description:</h4>
             <textarea id="description" placeholder="Add a description..." defaultValue={card.note}></textarea>
+            <br/>
+            <br />
             <h4><i className="far fa-calendar-alt" id="icons_overlay"></i>Due date:</h4>
             <input id="date" type="date" defaultValue={card.due_date} />
+            <br />
+            <br />
+            <h4><i className="fas fa-list-ul" id="icons_overlay"></i>Check List:</h4>
+            <div id="check_list"></div>
+            <div id="check_input"></div>
+            <button id="append_item">Add an item</button>
+            <br />
+            <br />
             <h4><i className="fas fa-toolbox" id="icons_overlay"></i>States:</h4>
+            <p>State: {state}</p>
             <i className="fa fa-check" id="check" aria-hidden="true"></i>
             <i className="fa fa-times" id="x" aria-hidden="true"></i>
           </div>
@@ -160,9 +177,23 @@ $(document).on('click', ".cards", (e) => {;
     };
     ReactDOM.render(<MessageChange />, document.getElementById("card_overlay"));
   }
-  // Settings to be saved + reload
-  // arrow function does not work for some reason
-  // Function for closing the info pop-up
+  //loop over checklist array
+  if (card.check_list) {
+    list = [];
+    for (var i in card.check_list) {
+      list.push(
+      <div id="check_div" key={i} id={i}>
+          <input type="checkbox" value={i} defaultChecked={card.check_list[i]} /><label>{i}</label><i className="fas fa-trash" id="delete_check"></i>
+      </div>
+      )
+    }
+    const RenderList = () => {
+      return (list)
+    }
+    ReactDOM.render(<RenderList />, document.getElementById("check_list"))
+  }
+
+  // Function for closing the info pop-up ++ Settings to be saved + reload
   function close_message () {
     //shortening
     var message = document.getElementById("message").innerHTML;
@@ -183,6 +214,48 @@ $(document).on('click', ".cards", (e) => {;
     $("#card_overlay").slideToggle(500);
     document.getElementById("pre_overlay").style.display = "none";
     }
+  //input for checklist
+  $("#append_item").click(() => {
+    const RenderInput = () =>{
+      document.getElementById("append_item").style.display = "none";
+      return (
+        <div>
+          <input id="input_value" type="text" placeholder="Add an item"></input><br/>
+          <button id="append_tolist">Add an item</button>
+        </div>
+      )
+    }
+    ReactDOM.render(<RenderInput />, document.getElementById("check_input"))
+    //making the checklist
+    $("#append_tolist").click(() => {
+      var value = document.getElementById("input_value").value;
+      card.check_list[value] = document.getElementById("input_value").checked;
+      const RenderList = () => {
+        list.push(
+          <div id="check_div" key={value} id={value}>
+            <input type="checkbox" value={value} defaultChecked={false} /><label>{value}</label><i className="fas fa-trash" id="delete_check"></i>
+          </div>
+        )
+        return(list)
+      }
+      document.getElementById("append_tolist").style.display = "none";
+      document.getElementById("input_value").style.display = "none";
+      document.getElementById("append_item").style.display = "block";
+      ReactDOM.render(<RenderList />, document.getElementById("check_list"));
+      localStorage.setItem("cards", JSON.stringify(collect));
+    })
+  })
+  // if a checkpoint is done, set it to local storage
+  $("input:checkbox").click((e) => {
+    var box = e.target;
+    card.check_list[box.value] = box.checked;
+    localStorage.setItem("cards", JSON.stringify(collect));
+  })
+  //deleting a given checkbox
+  $("#delete_check").click((e) => {
+    delete card.check_list[e.target.parentNode.id]
+    document.getElementById(e.target.parentNode.id).style.display = "none";
+  })
   // Delete a card, if the "X" is clicked
   $("#x").click(() => {
     delete collect[e.target.parentNode.id];
