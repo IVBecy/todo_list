@@ -8,13 +8,21 @@ body{
   background-color: DeepSkyBlue;
 }
 
-h1,h2,h3,h4{
+h1,h2,h3{
   font-family: "Fredoka One";
   color: black;
 }
 
+h4{
+  color: black;
+  font-weight: 600;
+  font-family: "Cairo";
+}
+
 div{
   color: black;
+  font-weight: 600;
+  font-family: "Cairo";
 }
 
 h1{
@@ -33,7 +41,7 @@ h4{
 }
 
 p,a{
-  font-family: "Fredoka One";
+  font-family: "Arial";
 }
 
 p{
@@ -90,10 +98,17 @@ i{
 
 [contenteditable="true"]:active,
 [contenteditable="true"]:focus{
+  padding:10px;
   border:2px solid rgb(5, 88, 241);
   outline:none;
 }
 
+textarea{
+  width:70%;
+  height:100px;
+  font-weight:400;
+  font-family: "Cairo";
+}
 /***************************** ID SELECTORS *************************************/
 /*Box for adding cards*/
 #adding_box{
@@ -178,28 +193,38 @@ i{
 
 /*The message card overlay itself*/
 #card_overlay{
-  position: fixed; 
+  position: absolute; 
   overflow-y: scroll;
+  overflow-x: hidden;
   display: none;
   width: 50%;
-  max-width: 50%;
   height: fit-content;
-  padding:10px;
+  padding:20px;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   background-color: #ededf0;
   z-index: 3;
+  text-align: left;
   margin-right: auto;
   margin-left: auto;
   margin-top: 10%;
   border-radius: 5px;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+#card_overlay::-webkit-scrollbar {
+  display: none;
 }
 
 /* X icon*/
 #cancel_settings{
-  margin:20px;
+  font-size:25px;
+  float:right;
+  top:0;
+  right:0;
   transition: 0.5s;
 }
 
@@ -210,10 +235,13 @@ i{
 /* Check icon on cards*/
 #check{
   background-color: #16df0f;
-  padding: 10px;
+  padding: 15px;
+  padding-right:25px;
+  padding-left:25px;
   margin-left: 10px;
   transition:0.7s;
-  font-size: 30px;
+  font-size: 25px;
+  color:black;
 }
 
 #check:hover{
@@ -223,10 +251,14 @@ i{
 
 /* X icon on cards*/
 #x{
+  color:black;
   background-color: #f05108;
-  padding: 10px;
-  transition: 0.7s;
-  font-size: 30px;
+  padding: 15px;
+  padding-right:25px;
+  padding-left:25px;
+  margin-left: 10px;
+  transition:0.7s;
+  font-size: 25px;
 }
 
 #x:hover{
@@ -285,25 +317,28 @@ i{
   width: 100%;
   padding:10px;
 }
+
+#editing{
+  color:rgb(58, 58, 58);
+  display: none;
+  transition: 0.5s;
+}
+
+/*icons for card_overlay*/
+#icons_overlay{
+  font-size:20px;
+  padding-right:10px;
+}
 /***************************** CLASS SELECTORS *************************************/
 /*Center aligned text*/
 .container{
   text-align:center;
 }
 
-.card{
-  text-align: left;
-  margin-left: auto;
-  margin-right: auto;
-  background-color: #dfdfdf;
-  width:fit-content;
-  height:fit-content;
-  padding:10px;
-  padding-top: 0;
-  padding-bottom: 0;
-  border: 1px solid black;
-  border-radius: 5px;
+.left_container{
+  text-align:left;
 }
+
 
 /*Box of every card*/
 .cards{
@@ -316,11 +351,20 @@ i{
   margin-right: auto;
   padding:10px;
   background-color: whitesmoke;
-  border-radius: 30px;
+  border-radius: 10px;
   font-family: "Fredoka One";
   font-size: 2rem;
-  transition: 1s;
+  transition: 0.5s;
 }
+
+.cards:hover{
+  background-color: rgb(167, 166, 166);
+}
+
+.cards:hover #editing{
+  display:block
+}
+
 
 /*for settings titles*/
 .properties{
@@ -330,6 +374,11 @@ i{
 }
 
 /***************************** MEDIA QUERIES *************************************/
+@media screen and (max-width:1200px){
+  #card_overlay{
+    width: 95%;
+  }
+}
 @media screen and (max-width:600px){
   h1{
     font-size: 3.5rem;

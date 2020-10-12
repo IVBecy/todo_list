@@ -36,9 +36,9 @@ $(document).ready(() =>  {
           <div className="cont" key={index}>
             <div id={index} className="cards">
               <div id={`text_${dict[index].name}`}>
-                {textToShow}<br />
-                <h6 id="due_date"><i className="fas fa-clock" style={{ fontSize: "20px", margin:"10px" }}></i>{dict[index].due_date}</h6>
+                {textToShow}
               </div>
+              <i className="fas fa-pencil-alt" id="editing" style={{fontSize:"15px"}}></i>
             </div>
           </div>
         ) 
@@ -104,8 +104,8 @@ const render_cards = () => {
         <div id={props.name} className="cards">
           <div id={`text_${props.name}`}>
             {textToShow}<br/>
-            <h6 id="due_date"><i className="fas fa-clock" style={{ fontSize: "20px", margin: "10px" }}></i>{props.due_date}</h6>
           </div>
+          <i className="fas fa-pencil-alt" id="editing" style={{fontSize:"15px"}}></i>
         </div>
       </div>
     )
@@ -141,20 +141,21 @@ $(document).on('click', ".cards", (e) => {;
     const  MessageChange = () => {
       return (
         <div>
-            <div className="container">
-              <div><i className="fa fa-times" id="cancel_settings" style={{ fontSize: "30px" }} onClick={close_message}></i></div>
-              <div id="message" contentEditable="true" suppressContentEditableWarning="true">{card.text}</div>
-            </div>
-            <br/>
-            <hr/>
-            <div className="container" style={{ "display": "block" }}>
-            <h3 style={{ textDecoration: "underline" }}>Set due date:</h3>
-            <input id="date" type="date" defaultValue={card.due_date} /><br />
-            <h3 style={{ textDecoration: "underline" }}>States</h3>
+          <div className="left_container">
+            <div><i className="fa fa-times" id="cancel_settings" onClick={close_message}></i></div>
+            <div id="message" contentEditable="true" suppressContentEditableWarning="true">{card.text}</div>
+          </div>
+          <br/>
+          <div className="left_container" style={{ "display": "block" }}>
+            <h4><i className="fas fa-align-left" id="icons_overlay"></i>Description:</h4>
+            <textarea id="description" placeholder="Add a description..." defaultValue={card.note}></textarea>
+            <h4><i className="far fa-calendar-alt" id="icons_overlay"></i>Due date:</h4>
+            <input id="date" type="date" defaultValue={card.due_date} />
+            <h4><i className="fas fa-toolbox" id="icons_overlay"></i>States:</h4>
             <i className="fa fa-check" id="check" aria-hidden="true"></i>
             <i className="fa fa-times" id="x" aria-hidden="true"></i>
-            </div>
           </div>
+        </div>
       )
     };
     ReactDOM.render(<MessageChange />, document.getElementById("card_overlay"));
@@ -174,6 +175,7 @@ $(document).on('click', ".cards", (e) => {;
     else{
       card["due_date"] = date
     }
+    card["note"] = document.getElementById("description").value
     //save and reload
     localStorage.setItem("cards", JSON.stringify(collect));
     document.getElementById(`text_${card.name}`).innerHTML = textToShow
@@ -189,13 +191,22 @@ $(document).on('click', ".cards", (e) => {;
     setTimeout(() => { key = "None" }, 500);
     location.reload()
   });
-  // Stage a card as "Done" if the check icon is clicked
+  // Stage a card as "Done" if the check icon is clicked (can revert changes by clicking the button again)
   $(`#check`).click(() => {
-    card.done = "yes";
-    localStorage.setItem("cards", JSON.stringify(collect));
-    key = "done";
-    $("#".concat(collect[e.target.parentNode.id].name)).css({ "text-decoration": "line-through", "opacity": 0.6 });
-    setTimeout(() => { key = "None" }, 500);
+    if (card.done == "no"){
+      card.done = "yes";
+      localStorage.setItem("cards", JSON.stringify(collect));
+      key = "done";
+      $("#".concat(collect[e.target.parentNode.id].name)).css({ "text-decoration": "line-through", "opacity": 0.6 });
+      setTimeout(() => { key = "None" }, 500);
+    }
+    else{
+      card.done = "no";
+      localStorage.setItem("cards", JSON.stringify(collect));
+      key = "done";
+      $("#".concat(collect[e.target.parentNode.id].name)).css({ "text-decoration": "none", "opacity":1 });
+      setTimeout(() => { key = "None" }, 500);
+    }
   });
 });
 
