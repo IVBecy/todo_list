@@ -182,7 +182,7 @@ $(document).on('click', ".cards", (e) => {;
     list = [];
     for (var i in card.check_list) {
       list.push(
-      <div id="check_div" key={i} id={i}>
+      <div id="check_div" key={i} name={i}>
           <input type="checkbox" value={i} defaultChecked={card.check_list[i]} /><label>{i}</label><i className="fas fa-trash" id="delete_check"></i>
       </div>
       )
@@ -213,7 +213,7 @@ $(document).on('click', ".cards", (e) => {;
     // location.reload();
     $("#card_overlay").slideToggle(500);
     document.getElementById("pre_overlay").style.display = "none";
-    }
+  }
   //input for checklist
   $("#append_item").click(() => {
     const RenderInput = () =>{
@@ -232,7 +232,7 @@ $(document).on('click', ".cards", (e) => {;
       card.check_list[value] = document.getElementById("input_value").checked;
       const RenderList = () => {
         list.push(
-          <div id="check_div" key={value} id={value}>
+          <div id="check_div" key={value} name={value}>
             <input type="checkbox" value={value} defaultChecked={false} /><label>{value}</label><i className="fas fa-trash" id="delete_check"></i>
           </div>
         )
@@ -252,9 +252,10 @@ $(document).on('click', ".cards", (e) => {;
     localStorage.setItem("cards", JSON.stringify(collect));
   })
   //deleting a given checkbox
-  $("#delete_check").click((e) => {
-    delete card.check_list[e.target.parentNode.id]
+  $(".fas.fa-trash").click((e) => {
+    delete card.check_list[e.target.parentNode.getAttribute("name")]
     document.getElementById(e.target.parentNode.id).style.display = "none";
+    localStorage.setItem("cards", JSON.stringify(collect));
   })
   // Delete a card, if the "X" is clicked
   $("#x").click(() => {
