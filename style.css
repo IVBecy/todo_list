@@ -70,6 +70,11 @@ input[type="checkbox"]{
   top: 1px;
 }
 
+input[type="date"]{
+  margin:0;
+  padding:10px;
+}
+
 button{
   background-color: black;
   border-radius: 15px;
@@ -240,6 +245,10 @@ label{
   display: none;
 }
 
+#card_overlay h4{
+  margin-top:20px;
+}
+
 /* X icon*/
 #cancel_settings{
   font-size:25px;
@@ -353,9 +362,9 @@ label{
 /*Chebox container*/
 #delete_check{
   padding:10px;
-  padding-left: 50px;
+  margin-left: 50px;
   color:black;
-  font-size:15px;
+  font-size:12px;
   display: none;
   transition: 0.2s;
 }
@@ -363,20 +372,16 @@ label{
 #check_div{
   width: fit-content;
   transition: 0.5s;
+  padding:5px;
   padding-left: 10px;
   padding-right: 10px;
 }
-
-#delete_check:hover{
-  color: red;
-}
-
 #check_div:hover{
   background-color: rgba(0,0,0,0.1);
 }
 
-#check_div:hover{
-  display: inline-block;
+#delete_check:hover{
+  color: red;
 }
 
 #check_div:hover #delete_check{

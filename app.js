@@ -25,6 +25,18 @@ const shorten = (text,dict) => {
   return textToShow
 }
 
+//Length check for strings
+const stringLength = (str,len) => {
+  var arr = str.split("")
+  for (var i in arr){
+    if (i % len == 0 && i != 0){
+      arr[i] += document.createElement("BR")
+      //arr.push(document.createElement("BR"))
+    }
+  }
+  return str
+}
+
 // Getting settings and cards (ONLOAD)
 $(document).ready(() =>  {
   if (localStorage.getItem("cards")){
@@ -153,22 +165,22 @@ $(document).on('click', ".cards", (e) => {;
           </div>
           <br/>
           <div className="left_container" style={{ "display": "block" }}>
-            <h4><i className="fas fa-align-left" id="icons_overlay"></i>Description:</h4>
+            <h4><i className="fas fa-align-left" id="icons_overlay"></i>Description</h4>
             <textarea id="description" placeholder="Add a description..." defaultValue={card.note}></textarea>
             <br/>
             <br />
-            <h4><i className="far fa-calendar-alt" id="icons_overlay"></i>Due date:</h4>
+            <h4><i className="far fa-calendar-alt" id="icons_overlay"></i>Due date</h4>
             <input id="date" type="date" defaultValue={card.due_date} />
             <br />
             <br />
-            <h4><i className="fas fa-list-ul" id="icons_overlay"></i>Check List:</h4>
+            <h4><i className="fas fa-list-ul" id="icons_overlay"></i>Check List</h4>
             <div id="check_list"></div>
             <div id="check_input"></div>
             <button id="append_item">Add an item</button>
             <br />
             <br />
             <h4><i className="fas fa-toolbox" id="icons_overlay"></i>States:</h4>
-            <p>State: {state}</p>
+            <p id="state">State: {state}</p>
             <i className="fa fa-check" id="check" aria-hidden="true"></i>
             <i className="fa fa-times" id="x" aria-hidden="true"></i>
           </div>
@@ -183,7 +195,7 @@ $(document).on('click', ".cards", (e) => {;
     for (var i in card.check_list) {
       list.push(
       <div id="check_div" key={i} name={i}>
-          <input type="checkbox" value={i} defaultChecked={card.check_list[i]} /><label>{i}</label><i className="fas fa-trash" id="delete_check"></i>
+          <input type="checkbox" value={i} defaultChecked={card.check_list[i]} /><label contentEditable="true" suppressContentEditableWarning="true">{i}</label><i className="fas fa-trash" id="delete_check"></i>
       </div>
       )
     }
@@ -221,7 +233,7 @@ $(document).on('click', ".cards", (e) => {;
       return (
         <div>
           <input id="input_value" type="text" placeholder="Add an item"></input><br/>
-          <button id="append_tolist">Add an item</button>
+          <button id="append_tolist">Add to list</button>
         </div>
       )
     }
@@ -233,7 +245,7 @@ $(document).on('click', ".cards", (e) => {;
       const RenderList = () => {
         list.push(
           <div id="check_div" key={value} name={value}>
-            <input type="checkbox" value={value} defaultChecked={false} /><label>{value}</label><i className="fas fa-trash" id="delete_check"></i>
+            <input type="checkbox" value={value} defaultChecked={false} /><label contentEditable="true" suppressContentEditableWarning="true">{value}</label><i className="fas fa-trash" id="delete_check"></i>
           </div>
         )
         return(list)
@@ -254,8 +266,24 @@ $(document).on('click', ".cards", (e) => {;
   //deleting a given checkbox
   $(".fas.fa-trash").click((e) => {
     delete card.check_list[e.target.parentNode.getAttribute("name")]
-    document.getElementById(e.target.parentNode.id).style.display = "none";
+    document.getElementsByName(e.target.parentNode.getAttribute("name"))[0].style.display = "none";
     localStorage.setItem("cards", JSON.stringify(collect));
+  })
+  //renaming checklist opts
+  $("label").click((e) => {
+    var msg = e.target.textContent
+    const Button = () => {
+      return(
+        <button id="save_check">Save</button>
+      )
+    }
+    ReactDOM.render(<Button />,document.getElementById("check_input"))
+    $("#save_check").click(() => {
+      /// BUG HERE !!!!!!!!!!!!!!!!!!!
+      card.check_list[msg] = [e.target.textContent] = e.target.checked
+      localStorage.setItem("cards", JSON.stringify(collect));
+      document.getElementById("save_check").style.display = "none";
+    })
   })
   // Delete a card, if the "X" is clicked
   $("#x").click(() => {
@@ -269,6 +297,8 @@ $(document).on('click', ".cards", (e) => {;
   $(`#check`).click(() => {
     if (card.done == "no"){
       card.done = "yes";
+      state = "Done";
+      document.getElementById("state").innerHTML = `State: ${state}`;
       localStorage.setItem("cards", JSON.stringify(collect));
       key = "done";
       $("#".concat(collect[e.target.parentNode.id].name)).css({ "text-decoration": "line-through", "opacity": 0.6 });
@@ -276,6 +306,8 @@ $(document).on('click', ".cards", (e) => {;
     }
     else{
       card.done = "no";
+      state = "In-progress"
+      document.getElementById("state").innerHTML = `State: ${state}`;
       localStorage.setItem("cards", JSON.stringify(collect));
       key = "done";
       $("#".concat(collect[e.target.parentNode.id].name)).css({ "text-decoration": "none", "opacity":1 });
