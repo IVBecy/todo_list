@@ -387,6 +387,10 @@ label{
 #check_div:hover #delete_check{
   display:inline-block;
 }
+
+#save_check{
+  margin-right: 25px;;
+}
 /***************************** CLASS SELECTORS *************************************/
 /*Center aligned text*/
 .container{

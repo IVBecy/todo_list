@@ -2,6 +2,7 @@
 var key = "None";
 var textToShow;
 var state;
+var msg;
 var ToBeRendered = [];
 var onLoadRender = [];
 var list = [];
@@ -271,20 +272,46 @@ $(document).on('click', ".cards", (e) => {;
   })
   //renaming checklist opts
   $("label").click((e) => {
-    var msg = e.target.textContent
-    const Button = () => {
-      return(
-        <button id="save_check">Save</button>
-      )
-    }
-    ReactDOM.render(<Button />,document.getElementById("check_input"))
-    $("#save_check").click(() => {
-      /// BUG HERE !!!!!!!!!!!!!!!!!!!
-      card.check_list[msg] = [e.target.textContent] = e.target.checked
+      msg = e.target.textContent
+      var target = e.target
+      var div = document.createElement("DIV");
+      div.setAttribute("id","btn_div")
+      document.getElementsByName(msg)[0].appendChild(div)
+      const Button = () => {
+        return(
+          <div id="check_buttons">
+            <button id="save_check">Save</button><button id="cancel_check" style={{backgroundColor:"rgba(0,0,0,0.5)"}}>Cancel</button>
+          </div>
+        )
+      }
+    ReactDOM.render(<Button />,document.getElementById("btn_div"))
+   // saving the renamed checklist
+   $("#save_check").click((e) => {
+     //looping through many arrays to get the correct message and boolean
+      var divs = document.querySelectorAll("#check_div")
+      for (var i in divs ){
+        if (divs[i].children != undefined){
+          var dict = divs[i].childNodes;
+          for (var index in dict) {
+            if (dict[index] == target){
+              if (msg != dict[index].textContent){
+                card.check_list[dict[index].textContent] = card.check_list[msg]
+                delete card.check_list[msg]
+              }
+            }
+          }
+        }
+      }
+      document.getElementById("check_buttons").style.display = "none";
       localStorage.setItem("cards", JSON.stringify(collect));
-      document.getElementById("save_check").style.display = "none";
     })
-  })
+    // Getiing rid of the save button + canceling editing
+    $("#cancel_check").click(() => {
+      var label = document.querySelector(".check_div").querySelector("label");
+      label.innerHTML = msg;
+      document.getElementById("check_buttons").style.display = "none";
+    })
+  })  
   // Delete a card, if the "X" is clicked
   $("#x").click(() => {
     delete collect[e.target.parentNode.id];
