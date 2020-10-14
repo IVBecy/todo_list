@@ -1,4 +1,4 @@
- # To-Do list
+# To-Do list
 A To-Do list app in javascript.
 
 # Preview
@@ -11,16 +11,16 @@ A To-Do list app in javascript.
 
 ## **Features**
 - Responsive design
-- Stored data, in Local Storage
+- Data stored in Local Storage
 - Settings menu
 - Docs page
+- Info system for each card
+
+## **Card Info system**
+![website preview](images/info_sys.png)
 
 ## **Info**
-**Cards**
--  To make a card, click the "Add a card" button.
-- To Delete a card, click the " X " button next to it.
-- To mark a card as Done, click the green check next to the card.
+![website preview](images/info.png)
 
-**Appearance**
-- To set background or card colour, click the gear icon in the top left corner.
-- To change the original title, "TODO LIST", click on it, and enter your new title.
+## **Settings**
+![website preview](images/settings.png)
