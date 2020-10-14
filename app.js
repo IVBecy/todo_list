@@ -1,5 +1,4 @@
 // Variables 
-var key = "None";
 var textToShow;
 var state;
 var msg;
@@ -25,7 +24,6 @@ const shorten = (text, dict) => {
   }
   return textToShow
 }
-
 
 // Getting settings and cards (ONLOAD)
 $(document).ready(() => {
@@ -93,7 +91,6 @@ const render_cards = () => {
     "short_text": card_value.substring(0, 26) + "...",
     "short": "no",
     "done": "no",
-    "check_list": {},
   };
   //shortening
   shorten(card_value, props)
@@ -131,71 +128,41 @@ const render_cards = () => {
   }, 10)
 }
 
-// If a card is clicked, the user can edit its content, and see the full message
+// If a card is clicked, the info panel will pop up
 $(document).on('click', ".cards", (e) => {
-  ;
   var collect = JSON.parse(localStorage.getItem("cards"));
   var card = collect[e.target.parentNode.id];
-  // pass if the check, or the x is clicked only proceed if the card itself has been clicked
-  if (key == "done") { }
-  else if (key == "deleted") { }
-  else {
-    key = "None";
-    if (card.done == "yes") { state = "Done" }
-    else { state = "In-progress" }
-    $("#card_overlay").slideToggle(500);
-    document.getElementById("pre_overlay").style.display = "block";
-    document.getElementById("card_overlay").style.display = "block";
-    // Method to bring up the info overlay
-    const MessageChange = () => {
-      return (
-        <div>
-          <div className="left_container">
-            <div><i className="fa fa-times" id="cancel_settings" onClick={close_message}></i></div>
-            <div id="message" contentEditable="true" suppressContentEditableWarning="true">{card.text}</div>
-          </div>
+  if (card.done == "yes") { state = "Done" }
+  else { state = "In-progress" }
+  document.getElementById("pre_overlay").style.display = "block";
+  document.getElementById("card_overlay").style.display = "block";
+  // Method to bring up the info overlay
+  const MessageChange = () => {
+    return (
+      <div>
+        <div className="left_container">
+          <div><i className="fa fa-times" id="cancel_settings" onClick={close_message}></i></div>
+          <div id="message" contentEditable="true" suppressContentEditableWarning="true">{card.text}</div>
+        </div>
+        <br />
+        <div className="left_container" style={{ "display": "block" }}>
+          <h4><i className="fas fa-align-left" id="icons_overlay"></i>Description</h4>
+          <textarea id="description" placeholder="Add a description..." defaultValue={card.note}></textarea>
           <br />
-          <div className="left_container" style={{ "display": "block" }}>
-            <h4><i className="fas fa-align-left" id="icons_overlay"></i>Description</h4>
-            <textarea id="description" placeholder="Add a description..." defaultValue={card.note}></textarea>
-            <br />
-            <br />
-            <h4><i className="far fa-calendar-alt" id="icons_overlay"></i>Due date</h4>
-            <input id="date" type="date" defaultValue={card.due_date} />
-            <br />
-            <br />
-            <h4><i className="fas fa-list-ul" id="icons_overlay"></i>Check List</h4>
-            <div id="check_list"></div>
-            <div id="check_input"></div>
-            <button id="append_item">Add an item</button>
-            <br />
-            <br />
-            <h4><i className="fas fa-toolbox" id="icons_overlay"></i>States:</h4>
-            <p id="state">State: {state}</p>
-            <i className="fa fa-check" id="check" aria-hidden="true"></i>
-            <i className="fa fa-times" id="x" aria-hidden="true"></i>
-          </div>
+          <br />
+          <h4><i className="far fa-calendar-alt" id="icons_overlay"></i>Due date</h4>
+          <input id="date" type="date" defaultValue={card.due_date} />
+          <br />
+          <br />
+          <h4><i className="fas fa-toolbox" id="icons_overlay"></i>States:</h4>
+          <p id="state">State: {state}</p>
+          <i className="fa fa-check" id="check" aria-hidden="true"></i>
+          <i className="fa fa-times" id="x" aria-hidden="true"></i>
         </div>
-      )
-    };
-    ReactDOM.render(<MessageChange />, document.getElementById("card_overlay"));
+      </div>
+    )
   }
-  //loop over checklist array
-  if (card.check_list) {
-    list = [];
-    for (var i in card.check_list) {
-      list.push(
-        <div id="check_div" key={i} name={i}>
-          <input type="checkbox" value={i} defaultChecked={card.check_list[i]} /><label contentEditable="true" suppressContentEditableWarning="true">{i}</label><i className="fas fa-trash" id="delete_check"></i>
-        </div>
-      )
-    }
-    const RenderList = () => {
-      return (list)
-    }
-    ReactDOM.render(<RenderList />, document.getElementById("check_list"))
-  }
-
+  ReactDOM.render(<MessageChange />, document.getElementById("card_overlay"));
   // Function for closing the info pop-up ++ Settings to be saved + reload
   function close_message() {
     //shortening
@@ -213,101 +180,13 @@ $(document).on('click', ".cards", (e) => {
     //save and reload
     localStorage.setItem("cards", JSON.stringify(collect));
     document.getElementById(`text_${card.name}`).innerHTML = textToShow
-    // location.reload();
-    $("#card_overlay").slideToggle(500);
     document.getElementById("pre_overlay").style.display = "none";
+    document.getElementById("card_overlay").style.display = "none";
   }
-  //input for checklist
-  $("#append_item").click(() => {
-    const RenderInput = () => {
-      document.getElementById("append_item").style.display = "none";
-      return (
-        <div>
-          <input id="input_value" type="text" placeholder="Add an item"></input><br />
-          <button id="append_tolist">Add to list</button>
-        </div>
-      )
-    }
-    ReactDOM.render(<RenderInput />, document.getElementById("check_input"))
-    //making the checklist
-    $("#append_tolist").click(() => {
-      var value = document.getElementById("input_value").value;
-      card.check_list[value] = document.getElementById("input_value").checked;
-      const RenderList = () => {
-        list.push(
-          <div id="check_div" key={value} name={value}>
-            <input type="checkbox" value={value} defaultChecked={false} /><label contentEditable="true" suppressContentEditableWarning="true">{value}</label><i className="fas fa-trash" id="delete_check"></i>
-          </div>
-        )
-        return (list)
-      }
-      document.getElementById("append_tolist").style.display = "none";
-      document.getElementById("input_value").style.display = "none";
-      document.getElementById("append_item").style.display = "block";
-      ReactDOM.render(<RenderList />, document.getElementById("check_list"));
-      localStorage.setItem("cards", JSON.stringify(collect));
-    })
-  })
-  // if a checkpoint is done, set it to local storage
-  $("input:checkbox").click((e) => {
-    var box = e.target;
-    card.check_list[box.value] = box.checked;
-    localStorage.setItem("cards", JSON.stringify(collect));
-  })
-  //deleting a given checkbox
-  $(".fas.fa-trash").click((e) => {
-    delete card.check_list[e.target.parentNode.getAttribute("name")]
-    document.getElementsByName(e.target.parentNode.getAttribute("name"))[0].style.display = "none";
-    localStorage.setItem("cards", JSON.stringify(collect));
-  })
-  //renaming checklist opts
-  $("label").click((e) => {
-    msg = e.target.textContent
-    var target = e.target
-    var div = document.createElement("DIV");
-    div.setAttribute("id", "btn_div")
-    document.getElementsByName(msg)[0].appendChild(div)
-    const Button = () => {
-      return (
-        <div id="check_buttons">
-          <button id="save_check">Save</button><button id="cancel_check" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>Cancel</button>
-        </div>
-      )
-    }
-    ReactDOM.render(<Button />, document.getElementById("btn_div"))
-    // saving the renamed checklist
-    $("#save_check").click((e) => {
-      //looping through many arrays to get the correct message and boolean
-      var divs = document.querySelectorAll("#check_div")
-      for (var i in divs) {
-        if (divs[i].children != undefined) {
-          var dict = divs[i].childNodes;
-          for (var index in dict) {
-            if (dict[index] == target) {
-              if (msg != dict[index].textContent) {
-                card.check_list[dict[index].textContent] = card.check_list[msg]
-                delete card.check_list[msg]
-              }
-            }
-          }
-        }
-      }
-      document.getElementById("check_buttons").style.display = "none";
-      localStorage.setItem("cards", JSON.stringify(collect));
-    })
-    // Getiing rid of the save button + canceling editing
-    $("#cancel_check").click(() => {
-      var label = document.querySelector(".check_div").querySelector("label");
-      label.innerHTML = msg;
-      document.getElementById("check_buttons").style.display = "none";
-    })
-  })
   // Delete a card, if the "X" is clicked
   $("#x").click(() => {
     delete collect[e.target.parentNode.id];
     localStorage.setItem("cards", JSON.stringify(collect));
-    key = "deleted";
-    setTimeout(() => { key = "None" }, 500);
     location.reload()
   });
   // Stage a card as "Done" if the check icon is clicked (can revert changes by clicking the button again)
@@ -317,18 +196,14 @@ $(document).on('click', ".cards", (e) => {
       state = "Done";
       document.getElementById("state").innerHTML = `State: ${state}`;
       localStorage.setItem("cards", JSON.stringify(collect));
-      key = "done";
       $("#".concat(collect[e.target.parentNode.id].name)).css({ "text-decoration": "line-through", "opacity": 0.6 });
-      setTimeout(() => { key = "None" }, 500);
     }
     else {
       card.done = "no";
       state = "In-progress"
       document.getElementById("state").innerHTML = `State: ${state}`;
       localStorage.setItem("cards", JSON.stringify(collect));
-      key = "done";
       $("#".concat(collect[e.target.parentNode.id].name)).css({ "text-decoration": "none", "opacity": 1 });
-      setTimeout(() => { key = "None" }, 500);
     }
   });
 });

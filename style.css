@@ -77,7 +77,7 @@ input[type="date"]{
 
 button{
   background-color: black;
-  border-radius: 15px;
+  border-radius: 5px;
   width: fit-content;
   height:fit-content;
   padding:7px;
@@ -118,11 +118,6 @@ textarea{
   font-family: "Cairo";
 }
 
-label{
-  margin-left:10px;
-  position: relative;
-  bottom: 1.5px;
-}
 /***************************** ID SELECTORS *************************************/
 /*Box for adding cards*/
 #adding_box{
@@ -358,39 +353,6 @@ label{
   font-size:20px;
   padding-right:10px;
 }
-
-/*Chebox container*/
-#delete_check{
-  margin-left: 50px;
-  color:black;
-  font-size:12px;
-  display: none;
-  transition: 0.2s;
-}
-
-#check_div{
-  width: fit-content;
-  max-width: 700px;
-  transition: 0.5s;
-  padding:5px;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-#check_div:hover{
-  background-color: rgba(0,0,0,0.1);
-}
-
-#delete_check:hover{
-  color: red;
-}
-
-#check_div:hover #delete_check{
-  display:inline-block;
-}
-
-#save_check{
-  margin-right: 25px;;
-}
 /***************************** CLASS SELECTORS *************************************/
 /*Center aligned text*/
 .container{
@@ -400,7 +362,6 @@ label{
 .left_container{
   text-align:left;
 }
-
 
 /*Box of every card*/
 .cards{
