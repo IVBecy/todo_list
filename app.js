@@ -33,15 +33,15 @@ $(document).ready(() => {
       var dict = JSON.parse(localStorage.getItem("cards"));
       for (var index in dict) {
         //shortening
-        shorten(dict[index].text, dict[index])
+        shorten(dict[index].text, dict[index]);
         //appending to the list
         onLoadRender.push(
           <div className="cont" key={index}>
             <div id={index} className="cards">
               <div id={`text_${dict[index].name}`}>
                 {textToShow}
+                <i className="fas fa-pencil-alt"></i>
               </div>
-              <i className="fas fa-pencil-alt" id="editing" style={{ fontSize: "15px" }}></i>
             </div>
           </div>
         )
@@ -60,19 +60,20 @@ $(document).ready(() => {
   }
   //Apply settings
   if (localStorage.getItem("settings")) {
-    var set = JSON.parse(localStorage.getItem("settings"))
+    var set = JSON.parse(localStorage.getItem("settings"));
     for (var index in set) {
       if (index == "bg_color") {
-        document.body.style.backgroundColor = set[index]
+        document.body.style.backgroundColor = set[index];
       }
       else if (index == "card_color") {
-        var cards = document.getElementsByClassName("cards")
+        var cards = document.getElementsByClassName("cards");
         for (var i = 0; i < cards.length; i++) {
-          cards[i].style.backgroundColor = set[index]
+          cards[i].style.backgroundColor = set[index];
         }
       }
       else if (index == "title") {
-        document.getElementById("title").innerHTML = set[index]
+        document.getElementById("title").innerHTML = set[index];
+        document.title = `${document.getElementById("title").innerHTML} | List`;
       }
     }
   }
@@ -93,10 +94,10 @@ const render_cards = () => {
     "done": "no",
   };
   //shortening
-  shorten(card_value, props)
+  shorten(card_value, props);
   //update cards dictionary and  set to local storage
   if (localStorage.getItem("cards")) { }
-  else { localStorage.setItem("cards", JSON.stringify(dictFromStorage)) }
+  else { localStorage.setItem("cards", JSON.stringify(dictFromStorage)) };
   dictFromStorage = JSON.parse(localStorage.getItem("cards"));
   dictFromStorage[storage_name] = props;
   localStorage.setItem("cards", JSON.stringify(dictFromStorage));
@@ -106,9 +107,9 @@ const render_cards = () => {
       <div className="cont" key={props.name}>
         <div id={props.name} className="cards">
           <div id={`text_${props.name}`}>
-            {textToShow}<br />
+            {textToShow}
+            <i className="fas fa-pencil-alt"></i>
           </div>
-          <i className="fas fa-pencil-alt" id="editing" style={{ fontSize: "15px" }}></i>
         </div>
       </div>
     )
@@ -134,6 +135,7 @@ $(document).on('click', ".cards", (e) => {
   var card = collect[e.target.parentNode.id];
   if (card.done == "yes") { state = "Done" }
   else { state = "In-progress" }
+  document.title = `${collect[e.target.parentNode.id].text} | Info`;
   document.getElementById("pre_overlay").style.display = "block";
   document.getElementById("card_overlay").style.display = "block";
   // Method to bring up the info overlay
@@ -166,15 +168,16 @@ $(document).on('click', ".cards", (e) => {
   // Function for closing the info pop-up ++ Settings to be saved + reload
   function close_message() {
     //shortening
+    document.title = `${document.getElementById("title").innerHTML} | List`;
     var message = document.getElementById("message").innerHTML;
-    shorten(message, card)
+    shorten(message, card);
     //set due date to cards
     var date = document.getElementById("date").value
     if (date == "" || date == "null" || date == "undefined") {
       //pass
     }
     else {
-      card["due_date"] = date
+      card["due_date"] = date;
     }
     card["note"] = document.getElementById("description").value
     //save and reload
@@ -187,7 +190,7 @@ $(document).on('click', ".cards", (e) => {
   $("#x").click(() => {
     delete collect[e.target.parentNode.id];
     localStorage.setItem("cards", JSON.stringify(collect));
-    location.reload()
+    location.reload();
   });
   // Stage a card as "Done" if the check icon is clicked (can revert changes by clicking the button again)
   $(`#check`).click(() => {
@@ -200,7 +203,7 @@ $(document).on('click', ".cards", (e) => {
     }
     else {
       card.done = "no";
-      state = "In-progress"
+      state = "In-progress";
       document.getElementById("state").innerHTML = `State: ${state}`;
       localStorage.setItem("cards", JSON.stringify(collect));
       $("#".concat(collect[e.target.parentNode.id].name)).css({ "text-decoration": "none", "opacity": 1 });
@@ -212,33 +215,34 @@ $(document).on('click', ".cards", (e) => {
 $("#title").click(() => {
   $(document).click(() => {
     if (localStorage.getItem("settings")) {
-      var dict = JSON.parse(localStorage.getItem("settings"))
+      var dict = JSON.parse(localStorage.getItem("settings"));
       dict["title"] = document.getElementById("title").innerHTML;
     }
     else {
-      localStorage.setItem("settings", JSON.stringify(settings))
-      var dict = JSON.parse(localStorage.getItem("settings"))
+      localStorage.setItem("settings", JSON.stringify(settings));
+      var dict = JSON.parse(localStorage.getItem("settings"));
       dict["title"] = document.getElementById("title").innerHTML;
     }
     //apply settings
-    localStorage.setItem("settings", JSON.stringify(dict))
+    localStorage.setItem("settings", JSON.stringify(dict));
   })
 });
 
 // Settings menu 
 $("#settings").click(
   function render_settings() {
-    $("#overlay").slideToggle(500);
-    document.getElementById("overlay").style.display = "block";
+    document.title = `Settings | List`;
+    document.getElementById("pre_overlay").style.display = "block";
+    document.getElementById("card_overlay").style.display = "block";
     const Settings = () => {
       return (
-        <div>
-          <div className="container">
-            <i className="fa fa-times" id="cancel_settings" onClick={close_settings} style={{ fontSize: "30px" }}></i>
-            <h1 style={{ marginBottom: "20px" }}>Settings</h1>
+        <div className="left_container" id="settings_menu">
+          <div>
+            <i className="fa fa-times" id="cancel_settings" onClick={close_settings}></i>
+            <h2>Settings</h2>
           </div>
-          <div className="container">
-            <h2 className="properties">Background colour:</h2>
+          <div>
+            <h3 className="properties"><i className="fas fa-fill" id="icons_overlay"/>Background colour</h3>
             <select className="properties" id="bg_color">
               <option value="DeepSkyBlue" id="DeepSkyBlue">Deep Sky Blue (Default)</option>
               <option value="teal" id="teal">Teal</option>
@@ -252,7 +256,7 @@ $("#settings").click(
               <option value="pink" id="pink">Pink</option>
               <option value="magenta" id="magenta">Magenta</option>
             </select>
-            <h2 className="properties">Card colour:</h2>
+            <h3 className="properties"><i className="fas fa-list-ul" id="icons_overlay" />Card colour</h3>
             <select className="properties" id="card_color">
               <option value="whitesmoke" id="whitesmoke_c">Grey (Default)</option>
               <option value="cyan" id="cyan_c">Cyan</option>
@@ -274,7 +278,7 @@ $("#settings").click(
         </div>
       )
     }
-    ReactDOM.render(<Settings />, document.getElementById("overlay"));
+    ReactDOM.render(<Settings />, document.getElementById("card_overlay"));
     // Set the selected colours as the 1st
     if (localStorage.getItem("settings")) {
       var dict = JSON.parse(localStorage.getItem("settings"))
@@ -292,78 +296,81 @@ $("#settings").click(
 
 // Closing the settings menu
 const close_settings = () => {
-  $("#overlay").slideToggle(500);
+  document.getElementById("pre_overlay").style.display = "none";
+  document.getElementById("card_overlay").style.display = "none";
+  document.title = `${document.getElementById("title").innerHTML} | List`;
 };
 
 // Closing the settings menu, and applying settings
 const save_settings = () => {
-  $("#overlay").slideToggle(500);
+  document.title = `${document.getElementById("title").innerHTML} | List`;
+  document.getElementById("pre_overlay").style.display = "none";
+  document.getElementById("card_overlay").style.display = "none";
   // bg colour
   var bg_value = document.getElementById("bg_color").value;
   document.body.style.backgroundColor = bg_value;
   // card colour 
   var cards = document.getElementsByClassName("cards");
-  var card_value = document.getElementById("card_color").value
+  var card_value = document.getElementById("card_color").value;
   for (var i = 0; i < cards.length; i++) {
     cards[i].style.backgroundColor = card_value;
   }
   //Adding values to the settings dict
   if (localStorage.getItem("settings")) {
-    var sett = JSON.parse(localStorage.getItem("settings"))
-    sett["bg_color"] = bg_value
-    sett["card_color"] = card_value
-    localStorage.setItem("settings", JSON.stringify(sett))
+    var sett = JSON.parse(localStorage.getItem("settings"));
+    sett["bg_color"] = bg_value;
+    sett["card_color"] = card_value;
+    localStorage.setItem("settings", JSON.stringify(sett));
   }
   else {
-    settings["bg_color"] = bg_value
-    settings["card_color"] = card_value
-    localStorage.setItem("settings", JSON.stringify(settings))
+    settings["bg_color"] = bg_value;
+    settings["card_color"] = card_value;
+    localStorage.setItem("settings", JSON.stringify(settings));
   }
 };
 
 // Info menu render
 $("#info").click(
   function render_info() {
+    document.title = `Docs | List`;
     $("#overlay").slideToggle(500);
-    document.getElementById("overlay").style.display = "block";
+    document.getElementById("pre_overlay").style.display = "block";
+    document.getElementById("card_overlay").style.display = "block";
     const Info = () => {
       return (
         <div>
-          <div className="container" id="info_menu">
+          <div className="left_container" id="info_menu">
             <i className="fa fa-times" id="cancel_settings" onClick={close_info} style={{ fontSize: "30px" }}></i>
-            <h1>Info</h1>
-            <hr />
-            <h2 id="secondary_title">Title</h2>
-            <p id="info_brief">By clicking on the title, you can re-name it, as you wish. Click outside of the editing box to make a change.</p>
-            <hr />
-            <h2 id="secondary_title">Settings</h2>
-            <p id="info_brief">By clicking the gear, on the main screen, you can edit the colour of the background, and the cards.</p>
-            <hr />
-            <h2 id="secondary_title">Cards</h2>
-            <h3>Adding</h3>
-            <p id="info_brief">You can click the "Add a card" button, to add new items to your list.</p>
-            <br />
-            <h3>Done state and Deleting</h3>
-            <p id="info_brief">You can mark a card as "Done" by clicking the <i className="fa fa-check"></i> icon. By that the
-              card will become darker, and wil have a line through it, but it does not get deleted, until you wish to
-              do it so.</p>
-            <p id="info_brief">You can delete any card by clicking the <i className="fa fa-times"></i> icon. Note that this change is irreversible.</p>
-            <br />
-            <h3>Message</h3>
-            <p id="info_brief">If the message in a card, has more than 30 characters, the app will chop the message. The whole message can be looked
-                at, by clicking on the given card. (Shortened messages have an ellipses at the end)</p>
-            <p id="info_brief">You can edit a message, by clicking on the given card. Then edit the message then, click "Save message", and
-                you are done.</p>
+            <h2>Info</h2>
+            <h4>Title</h4>
+            <p>By clicking on the title, you can re-name it, as you wish. Click outside of the editing box to approve to the change.</p>
+            <h4>Settings</h4>
+            <p>By clicking the gear, on the main screen you can edit the colour of the background, and the cards.</p>
+            <h4>Cards</h4>
+            <p>You can click the "+" icon, at the bottom of the screen, to add new items to your list.</p>
+            <h4>Card info menu</h4>
+            <p>By clicking on a card, you can bring up information about the it such as: a brief description of the task,
+              the due date, and operations. A card can be marked as done, by clicking the <i className="fa fa-check"></i> icon, with 
+              green background colour.
+              This action is reversible, simply click on the <i className="fa fa-check"></i> again, to remove the done attribute
+              of the card. You can also delete a card, by clicking on the <i className="fa fa-times"></i> icon, with red background colour.
+              This action is irreversible. Also within this menu, in the top left corner, you will see the name of the card. 
+              You can change that anytime, by clicking on it.</p>
+            <h4>Message</h4>
+            <p>If the message in a card, has more than 30 characters, the app will chop the message. The whole message can be looked
+                at, by clicking bringing up the info menu. (Shortened messages have an ellipses at the end)</p>
           </div>
         </div>
       )
     }
-    ReactDOM.render(<Info />, document.getElementById("overlay"));
+    ReactDOM.render(<Info />, document.getElementById("card_overlay"));
   });
 
 // Closing the info panel
 const close_info = () => {
-  $("#overlay").slideToggle(500);
+  document.title = `${document.getElementById("title").innerHTML} | List`;
+  document.getElementById("pre_overlay").style.display = "none";
+  document.getElementById("card_overlay").style.display = "none";
 }
 
 // Render input field, for adding a new card
