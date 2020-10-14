@@ -13,38 +13,27 @@ var settings = {};
 var card_count = Math.floor(Math.random() * 10000);
 
 // Method for shortening messages later on
-const shorten = (text,dict) => {
+const shorten = (text, dict) => {
   dict.text = text;
-  dict.short_text = text.substring(0,26) + "...";
+  dict.short_text = text.substring(0, 26) + "...";
   if (text.length > 30) {
     textToShow = dict.short_text
     dict.short = "yes";
   }
-  else{
+  else {
     textToShow = dict.text;
   }
   return textToShow
 }
 
-//Length check for strings
-const stringLength = (str,len) => {
-  var arr = str.split("")
-  for (var i in arr){
-    if (i % len == 0 && i != 0){
-      arr[i] += document.createElement("BR")
-      //arr.push(document.createElement("BR"))
-    }
-  }
-  return str
-}
 
 // Getting settings and cards (ONLOAD)
-$(document).ready(() =>  {
-  if (localStorage.getItem("cards")){
+$(document).ready(() => {
+  if (localStorage.getItem("cards")) {
     // Render the cards
-    const RENDER_ONLOAD = () =>{
+    const RENDER_ONLOAD = () => {
       var dict = JSON.parse(localStorage.getItem("cards"));
-      for (var index in dict){
+      for (var index in dict) {
         //shortening
         shorten(dict[index].text, dict[index])
         //appending to the list
@@ -54,37 +43,37 @@ $(document).ready(() =>  {
               <div id={`text_${dict[index].name}`}>
                 {textToShow}
               </div>
-              <i className="fas fa-pencil-alt" id="editing" style={{fontSize:"15px"}}></i>
+              <i className="fas fa-pencil-alt" id="editing" style={{ fontSize: "15px" }}></i>
             </div>
           </div>
-        ) 
+        )
       }
       //rendering
-      return(onLoadRender)
+      return (onLoadRender)
     }
-    ReactDOM.render(<RENDER_ONLOAD/>, document.getElementById("todo_cards_onload"));
+    ReactDOM.render(<RENDER_ONLOAD />, document.getElementById("todo_cards_onload"));
   }
   // If card has been marked as "Done", set it back
   var dict = JSON.parse(localStorage.getItem("cards"));
-  for (var i in dict){
-    if (dict[i].done == "yes"){
-      $("#".concat(i)).css({"text-decoration" : "line-through", "opacity":0.6});
+  for (var i in dict) {
+    if (dict[i].done == "yes") {
+      $("#".concat(i)).css({ "text-decoration": "line-through", "opacity": 0.6 });
     }
   }
   //Apply settings
   if (localStorage.getItem("settings")) {
     var set = JSON.parse(localStorage.getItem("settings"))
-    for (var index in set){
-      if (index == "bg_color"){
+    for (var index in set) {
+      if (index == "bg_color") {
         document.body.style.backgroundColor = set[index]
       }
-      else if (index == "card_color"){
+      else if (index == "card_color") {
         var cards = document.getElementsByClassName("cards")
-        for (var i = 0; i < cards.length; i++){
+        for (var i = 0; i < cards.length; i++) {
           cards[i].style.backgroundColor = set[index]
         }
       }
-      else if (index == "title"){
+      else if (index == "title") {
         document.getElementById("title").innerHTML = set[index]
       }
     }
@@ -98,40 +87,40 @@ const render_cards = () => {
   var storage_name = "card".concat(card_count);
   card_count = Math.floor(Math.random() * 10000);
   var props = {
-    "name":storage_name,
-    "due_date":"None",
-    "text":card_value,
-    "short_text":card_value.substring(0,26) + "...",
-    "short":"no",
-    "done":"no",
-    "check_list":{},
+    "name": storage_name,
+    "due_date": "None",
+    "text": card_value,
+    "short_text": card_value.substring(0, 26) + "...",
+    "short": "no",
+    "done": "no",
+    "check_list": {},
   };
   //shortening
   shorten(card_value, props)
   //update cards dictionary and  set to local storage
-  if (localStorage.getItem("cards")) {}
-  else{localStorage.setItem("cards", JSON.stringify(dictFromStorage))}
+  if (localStorage.getItem("cards")) { }
+  else { localStorage.setItem("cards", JSON.stringify(dictFromStorage)) }
   dictFromStorage = JSON.parse(localStorage.getItem("cards"));
   dictFromStorage[storage_name] = props;
-  localStorage.setItem("cards",JSON.stringify(dictFromStorage));
+  localStorage.setItem("cards", JSON.stringify(dictFromStorage));
   setTimeout(RENDER, 0);
   const RENDER = () => {
     ToBeRendered.push(
       <div className="cont" key={props.name}>
         <div id={props.name} className="cards">
           <div id={`text_${props.name}`}>
-            {textToShow}<br/>
+            {textToShow}<br />
           </div>
-          <i className="fas fa-pencil-alt" id="editing" style={{fontSize:"15px"}}></i>
+          <i className="fas fa-pencil-alt" id="editing" style={{ fontSize: "15px" }}></i>
         </div>
       </div>
     )
-    return(ToBeRendered)
+    return (ToBeRendered)
   }
-  ReactDOM.render(<RENDER/>, document.getElementById("todo_cards_render"));
+  ReactDOM.render(<RENDER />, document.getElementById("todo_cards_render"));
   // Making the input field disappear
   document.getElementById("input_field").style.display = "none";
-  setTimeout(() => { 
+  setTimeout(() => {
     var set = JSON.parse(localStorage.getItem("settings"))
     if (set["card_color"]) {
       var cards = document.getElementsByClassName("cards")
@@ -139,36 +128,37 @@ const render_cards = () => {
         cards[index].style.backgroundColor = set["card_color"];
       }
     }
-  },10)
+  }, 10)
 }
 
 // If a card is clicked, the user can edit its content, and see the full message
-$(document).on('click', ".cards", (e) => {;
+$(document).on('click', ".cards", (e) => {
+  ;
   var collect = JSON.parse(localStorage.getItem("cards"));
   var card = collect[e.target.parentNode.id];
   // pass if the check, or the x is clicked only proceed if the card itself has been clicked
-  if (key == "done") {}
-  else if (key == "deleted") {}
-  else{
+  if (key == "done") { }
+  else if (key == "deleted") { }
+  else {
     key = "None";
-    if (card.done == "yes"){state="Done"}
-    else{state="In-progress"}
+    if (card.done == "yes") { state = "Done" }
+    else { state = "In-progress" }
     $("#card_overlay").slideToggle(500);
     document.getElementById("pre_overlay").style.display = "block";
     document.getElementById("card_overlay").style.display = "block";
     // Method to bring up the info overlay
-    const  MessageChange = () => {
+    const MessageChange = () => {
       return (
         <div>
           <div className="left_container">
             <div><i className="fa fa-times" id="cancel_settings" onClick={close_message}></i></div>
             <div id="message" contentEditable="true" suppressContentEditableWarning="true">{card.text}</div>
           </div>
-          <br/>
+          <br />
           <div className="left_container" style={{ "display": "block" }}>
             <h4><i className="fas fa-align-left" id="icons_overlay"></i>Description</h4>
             <textarea id="description" placeholder="Add a description..." defaultValue={card.note}></textarea>
-            <br/>
+            <br />
             <br />
             <h4><i className="far fa-calendar-alt" id="icons_overlay"></i>Due date</h4>
             <input id="date" type="date" defaultValue={card.due_date} />
@@ -195,9 +185,9 @@ $(document).on('click', ".cards", (e) => {;
     list = [];
     for (var i in card.check_list) {
       list.push(
-      <div id="check_div" key={i} name={i}>
+        <div id="check_div" key={i} name={i}>
           <input type="checkbox" value={i} defaultChecked={card.check_list[i]} /><label contentEditable="true" suppressContentEditableWarning="true">{i}</label><i className="fas fa-trash" id="delete_check"></i>
-      </div>
+        </div>
       )
     }
     const RenderList = () => {
@@ -207,16 +197,16 @@ $(document).on('click', ".cards", (e) => {;
   }
 
   // Function for closing the info pop-up ++ Settings to be saved + reload
-  function close_message () {
+  function close_message() {
     //shortening
     var message = document.getElementById("message").innerHTML;
     shorten(message, card)
     //set due date to cards
     var date = document.getElementById("date").value
-    if (date == "" || date == "null" || date == "undefined"){
+    if (date == "" || date == "null" || date == "undefined") {
       //pass
     }
-    else{
+    else {
       card["due_date"] = date
     }
     card["note"] = document.getElementById("description").value
@@ -229,11 +219,11 @@ $(document).on('click', ".cards", (e) => {;
   }
   //input for checklist
   $("#append_item").click(() => {
-    const RenderInput = () =>{
+    const RenderInput = () => {
       document.getElementById("append_item").style.display = "none";
       return (
         <div>
-          <input id="input_value" type="text" placeholder="Add an item"></input><br/>
+          <input id="input_value" type="text" placeholder="Add an item"></input><br />
           <button id="append_tolist">Add to list</button>
         </div>
       )
@@ -249,7 +239,7 @@ $(document).on('click', ".cards", (e) => {;
             <input type="checkbox" value={value} defaultChecked={false} /><label contentEditable="true" suppressContentEditableWarning="true">{value}</label><i className="fas fa-trash" id="delete_check"></i>
           </div>
         )
-        return(list)
+        return (list)
       }
       document.getElementById("append_tolist").style.display = "none";
       document.getElementById("input_value").style.display = "none";
@@ -272,29 +262,29 @@ $(document).on('click', ".cards", (e) => {;
   })
   //renaming checklist opts
   $("label").click((e) => {
-      msg = e.target.textContent
-      var target = e.target
-      var div = document.createElement("DIV");
-      div.setAttribute("id","btn_div")
-      document.getElementsByName(msg)[0].appendChild(div)
-      const Button = () => {
-        return(
-          <div id="check_buttons">
-            <button id="save_check">Save</button><button id="cancel_check" style={{backgroundColor:"rgba(0,0,0,0.5)"}}>Cancel</button>
-          </div>
-        )
-      }
-    ReactDOM.render(<Button />,document.getElementById("btn_div"))
-   // saving the renamed checklist
-   $("#save_check").click((e) => {
-     //looping through many arrays to get the correct message and boolean
+    msg = e.target.textContent
+    var target = e.target
+    var div = document.createElement("DIV");
+    div.setAttribute("id", "btn_div")
+    document.getElementsByName(msg)[0].appendChild(div)
+    const Button = () => {
+      return (
+        <div id="check_buttons">
+          <button id="save_check">Save</button><button id="cancel_check" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>Cancel</button>
+        </div>
+      )
+    }
+    ReactDOM.render(<Button />, document.getElementById("btn_div"))
+    // saving the renamed checklist
+    $("#save_check").click((e) => {
+      //looping through many arrays to get the correct message and boolean
       var divs = document.querySelectorAll("#check_div")
-      for (var i in divs ){
-        if (divs[i].children != undefined){
+      for (var i in divs) {
+        if (divs[i].children != undefined) {
           var dict = divs[i].childNodes;
           for (var index in dict) {
-            if (dict[index] == target){
-              if (msg != dict[index].textContent){
+            if (dict[index] == target) {
+              if (msg != dict[index].textContent) {
                 card.check_list[dict[index].textContent] = card.check_list[msg]
                 delete card.check_list[msg]
               }
@@ -311,7 +301,7 @@ $(document).on('click', ".cards", (e) => {;
       label.innerHTML = msg;
       document.getElementById("check_buttons").style.display = "none";
     })
-  })  
+  })
   // Delete a card, if the "X" is clicked
   $("#x").click(() => {
     delete collect[e.target.parentNode.id];
@@ -322,7 +312,7 @@ $(document).on('click', ".cards", (e) => {;
   });
   // Stage a card as "Done" if the check icon is clicked (can revert changes by clicking the button again)
   $(`#check`).click(() => {
-    if (card.done == "no"){
+    if (card.done == "no") {
       card.done = "yes";
       state = "Done";
       document.getElementById("state").innerHTML = `State: ${state}`;
@@ -331,20 +321,20 @@ $(document).on('click', ".cards", (e) => {;
       $("#".concat(collect[e.target.parentNode.id].name)).css({ "text-decoration": "line-through", "opacity": 0.6 });
       setTimeout(() => { key = "None" }, 500);
     }
-    else{
+    else {
       card.done = "no";
       state = "In-progress"
       document.getElementById("state").innerHTML = `State: ${state}`;
       localStorage.setItem("cards", JSON.stringify(collect));
       key = "done";
-      $("#".concat(collect[e.target.parentNode.id].name)).css({ "text-decoration": "none", "opacity":1 });
+      $("#".concat(collect[e.target.parentNode.id].name)).css({ "text-decoration": "none", "opacity": 1 });
       setTimeout(() => { key = "None" }, 500);
     }
   });
 });
 
 // If you click on the title, you can change its name
-$("#title").click(() =>{
+$("#title").click(() => {
   $(document).click(() => {
     if (localStorage.getItem("settings")) {
       var dict = JSON.parse(localStorage.getItem("settings"))
@@ -362,15 +352,15 @@ $("#title").click(() =>{
 
 // Settings menu 
 $("#settings").click(
-  function render_settings(){
+  function render_settings() {
     $("#overlay").slideToggle(500);
     document.getElementById("overlay").style.display = "block";
-    const Settings = () =>{
-      return(
+    const Settings = () => {
+      return (
         <div>
           <div className="container">
-            <i className="fa fa-times" id="cancel_settings" onClick={close_settings} style={{fontSize:"30px"}}></i>
-            <h1 style={{marginBottom: "20px"}}>Settings</h1>
+            <i className="fa fa-times" id="cancel_settings" onClick={close_settings} style={{ fontSize: "30px" }}></i>
+            <h1 style={{ marginBottom: "20px" }}>Settings</h1>
           </div>
           <div className="container">
             <h2 className="properties">Background colour:</h2>
@@ -402,9 +392,9 @@ $("#settings").click(
               <option value="pink" id="pink_c">Pink</option>
               <option value="magenta" id="magenta_c">Magenta</option>
             </select>
-            <br/>
-            <br/>
-            <button onClick={save_settings}>Save Settings</button>  
+            <br />
+            <br />
+            <button onClick={save_settings}>Save Settings</button>
           </div>
         </div>
       )
@@ -413,11 +403,11 @@ $("#settings").click(
     // Set the selected colours as the 1st
     if (localStorage.getItem("settings")) {
       var dict = JSON.parse(localStorage.getItem("settings"))
-      for (var i in dict){
-        if (i == "bg_color"){
+      for (var i in dict) {
+        if (i == "bg_color") {
           document.getElementById(dict[i]).selected = "true";
         }
-        else if (i == "card_color"){
+        else if (i == "card_color") {
           document.getElementById(dict[i].concat("_c")).selected = "true";
         }
       }
@@ -426,54 +416,54 @@ $("#settings").click(
 );
 
 // Closing the settings menu
-const close_settings = () =>{
+const close_settings = () => {
   $("#overlay").slideToggle(500);
 };
 
 // Closing the settings menu, and applying settings
-const save_settings = () =>{
+const save_settings = () => {
   $("#overlay").slideToggle(500);
   // bg colour
   var bg_value = document.getElementById("bg_color").value;
   document.body.style.backgroundColor = bg_value;
   // card colour 
   var cards = document.getElementsByClassName("cards");
-  var card_value = document.getElementById("card_color").value 
+  var card_value = document.getElementById("card_color").value
   for (var i = 0; i < cards.length; i++) {
     cards[i].style.backgroundColor = card_value;
   }
   //Adding values to the settings dict
   if (localStorage.getItem("settings")) {
     var sett = JSON.parse(localStorage.getItem("settings"))
-    sett["bg_color"] = bg_value 
-    sett["card_color"] = card_value 
+    sett["bg_color"] = bg_value
+    sett["card_color"] = card_value
     localStorage.setItem("settings", JSON.stringify(sett))
   }
-  else{
-    settings["bg_color"] = bg_value 
-    settings["card_color"] = card_value 
+  else {
+    settings["bg_color"] = bg_value
+    settings["card_color"] = card_value
     localStorage.setItem("settings", JSON.stringify(settings))
   }
 };
 
 // Info menu render
 $("#info").click(
-  function render_info(){
+  function render_info() {
     $("#overlay").slideToggle(500);
     document.getElementById("overlay").style.display = "block";
-    const Info = () =>{
-      return(
+    const Info = () => {
+      return (
         <div>
           <div className="container" id="info_menu">
             <i className="fa fa-times" id="cancel_settings" onClick={close_info} style={{ fontSize: "30px" }}></i>
             <h1>Info</h1>
-            <hr/>
+            <hr />
             <h2 id="secondary_title">Title</h2>
             <p id="info_brief">By clicking on the title, you can re-name it, as you wish. Click outside of the editing box to make a change.</p>
-            <hr/>
+            <hr />
             <h2 id="secondary_title">Settings</h2>
             <p id="info_brief">By clicking the gear, on the main screen, you can edit the colour of the background, and the cards.</p>
-            <hr/>
+            <hr />
             <h2 id="secondary_title">Cards</h2>
             <h3>Adding</h3>
             <p id="info_brief">You can click the "Add a card" button, to add new items to your list.</p>
@@ -493,11 +483,11 @@ $("#info").click(
         </div>
       )
     }
-    ReactDOM.render(<Info/>, document.getElementById("overlay"));
-});
+    ReactDOM.render(<Info />, document.getElementById("overlay"));
+  });
 
 // Closing the info panel
-const close_info = () =>{
+const close_info = () => {
   $("#overlay").slideToggle(500);
 }
 
@@ -506,7 +496,7 @@ const render_input = () => {
   const Inputs = () => {
     return (
       <div className="container" id="input_field" style={{ "display": "block" }}>
-        <input id="todo_input" type="text" placeholder="Enter something" /><br/>
+        <input id="todo_input" type="text" placeholder="Enter something" /><br />
         <button onClick={render_cards}>Save this card</button>
       </div>
     )
